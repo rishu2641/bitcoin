@@ -1,0 +1,160 @@
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js">
+</script>
+<script type="text/javascript">
+function callURL(){
+    var numWallets = document.getElementById("num_Nodes").value;
+    var numTransactions = document.getElementById("num_transaction").value;
+    
+    window.location.href = "/dashboard/?numWallets="+numWallets+"&numTX="+numTransactions;
+}
+
+(function onLoad(){
+  var divElem = document.createElement("div");
+  divElem.id = "output-container";
+  divElem.className = "container";
+  divElem.innerText = "All Miners start with 0 BTS and all users started with 50 BTS";
+  var datapoints = '<%= @datapoints %>'.substr(1);
+  var timeArr = datapoints.split("#");
+  var data = {
+    labels: [],
+    datasets: []
+  };
+
+  var user = {
+    labels: [],
+    datasets:[]
+  }
+
+  var miner = {
+    label: [],
+    datasets: []
+  }
+  var useramounts = {};
+  for(var i=0;i<timeArr.length;i++) {
+    var arr = timeArr[i].split("-");
+    data.labels.push(parseInt(arr[0]));
+    var amountArr = arr[1].split(";");
+    for(var j=0;j<amountArr.length;j++) {
+      if(!isNaN(parseInt(amountArr[j]))) {
+        if(!useramounts.hasOwnProperty(j)) {
+          useramounts[j] = [];
+        }
+        useramounts[j].push(parseInt(amountArr[j]));
+        if(i==timeArr.length-1) {
+          var currDiv = document.createElement("div");
+          if(j<=10) {
+            currDiv.innerText = "Miner ";
+            currDiv.innerText += j + ": " + amountArr[j] + " BTS";
+          } else {
+            currDiv.innerText = "User ";
+            currDiv.innerText += j-10 + ": " + amountArr[j] + " BTS";
+          }
+          
+          currDiv.class = "output";
+          divElem.appendChild(currDiv);
+        }
+      }
+    }
+  }
+  for(var user in useramounts){
+    if(user<=10){
+  //  data.datasets.push({
+  //    label: "Miner " + user,
+  //    data: useramounts[user],
+  //    backgroundColor : getRandomColor(),
+  //    fill: false
+  //  });
+  }
+    else{
+      {
+      data.datasets.push({
+      label: "User " + (user-10),
+      data: useramounts[user],
+      backgroundColor : getRandomColor(),
+      fill: false
+    });}
+    }
+  }
+
+function getRandomColor() {
+    var letters = '0123456789ABCDEF'.split('');
+    var color = '#';
+    for (var i = 0; i < 6; i++ ) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+
+
+  var divElem2 = document.createElement("div");
+  divElem2.id = "canvas-container";
+  //divElem2.className = "container";
+  var canvasElem = document.createElement("canvas");
+  canvasElem.id = "myChart";
+  canvasElem.width = 1600;
+  canvasElem.height = 900;
+  document.getElementsByTagName("body")[0].appendChild(divElem2);
+  document.getElementById("canvas-container").appendChild(canvasElem);
+  var ctx = document.getElementById("myChart");
+  var myChart = new Chart(ctx, {
+    type: 'line',
+    data: data,
+    options: {
+      title: {
+          display: true,
+          text: 'USER wallet over time in milliseconds'
+        },
+      scales: {
+    xAxes: [{
+      gridLines: {
+        display: false,
+        color: "black"
+      },
+      scaleLabel: {
+        display: true,
+        labelString: "Time in Milliseconds",
+        fontColor: "red"
+      }
+    }],
+    yAxes: [{
+      gridLines: {
+        color: "black",
+        borderDash: [2, 5],
+      },
+      scaleLabel: {
+        display: true,
+        labelString: "Number of BTS",
+        fontColor: "green"
+      }
+    }]
+  }
+    }
+  });
+  document.getElementsByTagName("body")[0].appendChild(divElem);
+  
+})();
+</script>
+
+
+
+
+
+<div>
+NUMBER OF USER:<br>
+</div>
+
+<div>
+<input type="text" id="num_Nodes" name="num_Nodes:" value="100"><br>
+</div>
+
+<div>
+NUMBER OF TRANSACTIONS<br>
+</div>
+
+<div>
+<input type="text" id="num_transaction"name="num_transaction" value="1000"><br>
+</div>
+
+<div>
+<input type="button" value="Submit" onclick="callURL()">
+</div>

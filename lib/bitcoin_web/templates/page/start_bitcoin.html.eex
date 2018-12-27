@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>HTML Forms</h2>
+
+<form action="/action_page.php">
+  First name:<br>
+  <input type="text" name="NO_OF_USER:" value="100">
+  <br>
+  Last name:<br>
+  <input type="text" name="NO_OF_TRANSACTIONS" value="1000">
+  <br><br>
+  <input type="submit" value="Submit">
+</form> 
+
+
+</body>
+</html>
